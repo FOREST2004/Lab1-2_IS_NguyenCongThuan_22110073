@@ -13,18 +13,18 @@
 - **Targeting secretFunc()**: By exploiting this vulnerability, we can overwrite the return address of the vuln() function in the stack and replace it with the address of secretFunc(), forcing the program to execute secretFunc().
 
 ### Execution Details
-## Compile the program with security options disabled:
+#### Compile the program with security options disabled:
 - -fno-stack-protector: Disables stack protection, making the exploit easier.
 - -mpreferred-stack-boundary=2: Ensures stack alignment at 4 bytes, suitable for x86 architecture.
 
 ![image](/bof11.png)
 
-## Analyzing with gdb:
+#### Analyzing with gdb:
 - Use gdb to disassemble the secretFunc and get its starting address (here 0x0804846b).
 
 ![](/bof12.png)
 
-## Exploitation Payload
+### Exploitation Payload
 
 ![image](/bof13.png)
 
@@ -44,8 +44,8 @@
 ---
 ---
 ---
-# Bof2
-## Compiling the Program
+## Bof2
+### Compiling the Program
 -You compiled the bof2.c program with the following options:
 - -w: Suppresses warnings.
 - -g: Enables debugging information.
@@ -54,7 +54,7 @@
   
 ![image](/bof21.png)
 
-## Buffer Overflow Process
+### Buffer Overflow Process
 
 ![image](/bof22.png)
 
@@ -63,7 +63,7 @@
 - The next 4 bytes overwrite the ‘check’ variable.
 - If additional bytes are provided, they can overwrite the saved EBP and Return Address.
 
-## Exploitation Payload
+### Exploitation Payload
 -To exploit this vulnerability, an attacker needs to create an input string that overwrites the check variable with the value 0xdeadbeef. The input must be at least 45 bytes long:
 
 - Fill the buffer: Use 40 characters (e.g., 'a').
@@ -81,21 +81,21 @@
 ---
 ---
 ---
-# Bof3
-## Buffer Overflow Vulnerability
+## Bof3
+### Buffer Overflow Vulnerability
 - Cause: The use of fgets(buf, 133, stdin) allows reading 133 bytes into a buffer that can only hold 128 bytes. This leads to a buffer overflow.
 - Consequence: If the user inputs more than 128 bytes, the excess bytes will overwrite adjacent memory, including the function pointer func.
-## Exploitation of the Vulnerability
+### Exploitation of the Vulnerability
 -Identifying the Address of shell()
 - Using GDB, the address of the shell() function is determined to be 0x0804845b.
   
 ![image](/bof31.png)
 
-## Creating the Payload
+### Creating the Payload
 -To exploit the vulnerability, an attacker needs to create an input string structured as follows:
 - 128 bytes: Fill the buffer with any character (e.g., 'a').
 - 4 bytes: Overwrite the function pointer func to point to the address of shell(), specifically 0x0804845b (represented as '\x5b\x84\x04\x08').
-## Executing the Exploit
+### Executing the Exploit
 -The following command is used to execute the exploit:
 
 ![image](/bof32.png)
@@ -106,7 +106,7 @@
 
 ![image](/bof33.png)
 
-## Explanation
+### Explanation
 
 - **Buffer (128 bytes)**: Initially filled with 128 bytes of input (e.g., 'a').
 - **Overwritten Function Pointer**: After the buffer, the next 4 bytes overwrite the original function pointer func, redirecting it to the shell() function.
@@ -119,8 +119,9 @@
 ---
 ---
 ---
-# CTF
-## Source Code Analysis
+# Lab 2
+## CTF
+### Source Code Analysis
 - Function **myfunc(int p, int q)**:
     - Reads a flag from flag1.txt.
     - Checks two parameters (p and q) against specific values.
@@ -131,7 +132,7 @@
 - Function **main()**:
     - Calls vuln() with the first argument from the command line.
 
-## Buffer Overflow Vulnerability
+### Buffer Overflow Vulnerability
 
 - Cause: Using strcpy() without checking the input string's length allows the user to provide a string longer than 100 bytes, leading to overwriting adjacent memory on the stack.
 - Consequence: When the buffer buf overflows, it can overwrite the return address of the vuln() function. This allows an attacker to change the program's control flow, leading to a call to myfunc().
